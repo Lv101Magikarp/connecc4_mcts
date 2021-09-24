@@ -62,7 +62,7 @@ class Board:
         # iterate columns bottom up, if an empty space is found it's a possible move
         # and the only possible move for this column
         for col in range(7):
-            for row in range(5,0,-1):
+            for row in range(5,-1,-1):
                 if self.position[row][col] == 0:
                     moves.append((row, col))
                     break
