@@ -73,7 +73,7 @@ class Board:
         for col in range(7):
             connected_pieces = 0
             connected_color = 0
-            for row in range(5,0,-1):
+            for row in range(5,-1,-1):
                 # count sequentially connected pieces
                 if self.position[row][col] == 0:
                     break
