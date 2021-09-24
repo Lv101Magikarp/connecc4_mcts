@@ -18,23 +18,25 @@ def run2PGame():
         else:
             print('P2, make a move marked by the numbers below:')
         board.printPositionWithLegalMoves()
+        # make the player input a legal move
         legal_moves = board.legalMoves()
         choice = inputChoice([str(i) for i in range(1, len(legal_moves) + 1)])
         board.makeMove(legal_moves[int(choice) - 1])
+        # check for game end
         terminal_state, result = board.checkForTerminalState()
     board.printPosition()
     if result == 1:
-        print('P1 WON!!! HOORAY!!!')
+        print('P1 WON!!! NAISU!!!')
     elif result == -1:
         print('P2 WON!!! HOORAY!!!')
     else:
         print('The game was drawn! How did yall manage that?')
 
 def run1PGame():
-    return
+    pass
 
 def runAIGame():
-    return
+    pass
 
 if __name__ == '__main__':
     print('Howdy! How do ya wanna play connecc 4?')
