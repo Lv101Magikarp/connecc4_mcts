@@ -1,5 +1,8 @@
+#!/usr/bin/python3
+
 from board import Board
 from mcts import MCTS
+import argparse
 
 def inputChoice(choices):
     choice = input()
@@ -33,7 +36,7 @@ def run2PGame():
     else:
         print('The game was drawn! How did yall manage that?')
 
-def run1PGame():
+def run1PGame(arg):
     # make the player decide who plays first
     print('Do you wish play first? 1 - yeah ofc, 2 - nah I\'m good')
     choice = inputChoice(('1', '2'))
@@ -42,7 +45,7 @@ def run1PGame():
     else:
         player_turn = -1
     mcts = MCTS()
-    print('Ze game haz begun: P1 = x, P2 = o')
+    print('Ze game haz begun')
     board = Board()
     terminal_state = False
     result = 0
@@ -59,7 +62,7 @@ def run1PGame():
             terminal_state, result = board.checkForTerminalState()
         else:
             print('Now it\'s mah turn *beep boop*')
-            board.makeMove(mcts.searchBestMove(board))
+            board.makeMove(mcts.searchBestMove(board, mode=arg['cpu1mode'], iterations=int(arg['cpu1iterations']), timeout_ms=int(arg['cpu1time'])))
             # check for game end
             terminal_state, result = board.checkForTerminalState()
     board.printPosition()
@@ -70,10 +73,40 @@ def run1PGame():
     else:
         print('The game was drawn! How did yall manage that?')
 
-def runAIGame():
-    pass
+def runAIGame(arg):
+    mcts = MCTS()
+    print('Ze game haz begun')
+    board = Board()
+    terminal_state = False
+    result = 0
+    while not terminal_state:
+        board.printPosition()
+        if board.turn == 1:
+            print('CPU1 will win *beep boop*')
+            board.makeMove(mcts.searchBestMove(board, mode=arg['cpu1mode'], iterations=int(arg['cpu1iterations']), timeout_ms=int(arg['cpu1time'])))
+        else:
+            print('CPU2 can\'t lose *beep boop*')
+            board.makeMove(mcts.searchBestMove(board, mode=arg['cpu2mode'], iterations=int(arg['cpu2iterations']), timeout_ms=int(arg['cpu2time'])))
+        # check for game end
+        terminal_state, result = board.checkForTerminalState()
+    board.printPosition()
+    if result == 1:
+        print('I told ya, CPU1 is the best *beep boop*')
+    elif result == -1:
+        print('CPU2 has more transistors than ya fools *beep boop*')
+    else:
+        print('The game was drawn! How did yall manage that?')
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--cpu1mode', default='i', choices=['i', 't'], help='mode for the CPU1 or 1P CPU: [i]terations or [t]ime per move')
+    parser.add_argument('--cpu2mode', default='i', choices=['i', 't'], help='mode for the CPU2: [i]terations or [t]ime per move')
+    parser.add_argument('--cpu1iterations', default='1500', help='CPU1 iterations per move')
+    parser.add_argument('--cpu2iterations', default='1500', help='CPU2 iterations per move')
+    parser.add_argument('--cpu1time', default='500', help='CPU1 time per move in ms')
+    parser.add_argument('--cpu2time', default='500', help='CPU2 time per move in ms')
+    arg = vars(parser.parse_args())
+
     print('Howdy! How do ya wanna play connecc 4?')
     print('1 - 2P')
     print('2 - 1P vs CPU')
@@ -82,6 +115,6 @@ if __name__ == '__main__':
     if choice == '1':
         run2PGame()
     elif choice == '2':
-        run1PGame()
+        run1PGame(arg)
     elif choice == '3':
-        runAIGame()
+        runAIGame(arg)

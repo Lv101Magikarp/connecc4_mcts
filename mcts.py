@@ -19,7 +19,7 @@ class MCTSTreeNode:
             c.printTree()
 
 class MCTS:
-    def searchBestMove(self, initial_board, mode='i', iterations=2000, timeout_ms=500, exploration_param=math.sqrt(2)):
+    def searchBestMove(self, initial_board, mode='i', iterations=1500, timeout_ms=500, exploration_param=math.sqrt(2)):
         self.root = MCTSTreeNode(initial_board)
         if mode == 'i':
             for i in range(iterations):
@@ -32,7 +32,6 @@ class MCTS:
                 current_time = time.time()
         else:
             raise Exception('The MCTS mode must be either \'i\' or \'t\'')
-        self.root.printTree()
         return self.UCB1BestNode(self.root, exploration_param).move
 
     def MCTSIteration(self, exploration_param):
@@ -64,8 +63,7 @@ class MCTS:
         terminal_state, result = rollout_board.checkForTerminalState()
         while terminal_state == False:
             legal_moves = rollout_board.legalMoves()
-            move = random.choice(legal_moves)
-            rollout_board.makeMove(move)
+            rollout_board.makeMove(random.choice(legal_moves))
             terminal_state, result = rollout_board.checkForTerminalState()
         return result
     
@@ -82,7 +80,7 @@ class MCTS:
             if c.visits == 0:
                 score = float('inf')
             else:
-                score = c.board.turn*(c.score/c.visits) + exploration_param*math.sqrt(math.log(node.visits)/c.visits)
+                score = node.board.turn*(c.score/c.visits) + exploration_param*math.sqrt(math.log(node.visits)/c.visits)
             if score > best_score:
                 best_score = score
                 best_nodes = [c]
